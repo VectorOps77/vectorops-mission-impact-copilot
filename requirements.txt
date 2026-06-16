@@ -1,0 +1,8 @@
+streamlit
+openai
+python-dotenv
+pydantic
+pytest
+ruff
+bandit
+pip-audit
