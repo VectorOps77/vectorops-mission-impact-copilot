@@ -2,6 +2,7 @@ streamlit
 openai
 python-dotenv
 pydantic
+python-docx
 pytest
 ruff
 bandit

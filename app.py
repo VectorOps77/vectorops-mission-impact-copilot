@@ -7,6 +7,7 @@ from src.services.prompts import (
     monthly_update_prompt,
     quality_check_prompt,
 )
+from src.services.document_service import create_docx, build_docx_filename
 
 st.set_page_config(
     page_title="VectorOps Mission Impact Copilot",
@@ -15,22 +16,36 @@ st.set_page_config(
 )
 
 st.title("📊 VectorOps Mission Impact Copilot")
-
 st.write(
     "Turn raw project notes into outcome-based stories, KPIs, "
-    "monthly updates, and leadership-ready MSR content."
+    "monthly updates, leadership-ready MSR content, and downloadable Word documents."
 )
 
 st.warning(
     "AI-generated content must be reviewed by a human before being used in any official report."
 )
 
-tab1, tab2, tab3, tab4 = st.tabs(
+if "last_output" not in st.session_state:
+    st.session_state.last_output = ""
+if "last_output_title" not in st.session_state:
+    st.session_state.last_output_title = "VectorOps PM Report"
+if "last_output_type" not in st.session_state:
+    st.session_state.last_output_type = "PM Report"
+
+
+def save_last_output(title: str, doc_type: str, content: str) -> None:
+    st.session_state.last_output_title = title
+    st.session_state.last_output_type = doc_type
+    st.session_state.last_output = content
+
+
+tab1, tab2, tab3, tab4, tab5 = st.tabs(
     [
         "Story Assistant",
         "KPI Builder",
         "Monthly Update Assistant",
         "Quality Checker",
+        "Document Generator",
     ]
 )
 
@@ -52,7 +67,9 @@ with tab1:
         else:
             with st.spinner("Generating story..."):
                 result = ask_openai(story_prompt(story_input))
+                save_last_output("Outcome-Based Project Story", "Project Story", result)
                 st.markdown(result)
+                st.success("Story saved to Document Generator tab.")
 
 with tab2:
     st.header("KPI Builder")
@@ -72,7 +89,9 @@ with tab2:
         else:
             with st.spinner("Building KPI..."):
                 result = ask_openai(kpi_prompt(kpi_input))
+                save_last_output("KPI Summary", "KPI Report", result)
                 st.markdown(result)
+                st.success("KPI output saved to Document Generator tab.")
 
 with tab3:
     st.header("Monthly Update Assistant")
@@ -92,7 +111,9 @@ with tab3:
         else:
             with st.spinner("Generating monthly update..."):
                 result = ask_openai(monthly_update_prompt(update_input))
+                save_last_output("Monthly Status Update", "MSR Draft", result)
                 st.markdown(result)
+                st.success("Monthly update saved to Document Generator tab.")
 
 with tab4:
     st.header("Quality & Alignment Checker")
@@ -109,4 +130,61 @@ with tab4:
         else:
             with st.spinner("Checking quality..."):
                 result = ask_openai(quality_check_prompt(quality_input))
+                save_last_output("Quality Alignment Review", "Quality Review", result)
                 st.markdown(result)
+                st.success("Quality review saved to Document Generator tab.")
+
+with tab5:
+    st.header("Document Generator")
+    st.write("Create a polished Word document from the latest AI output or pasted content.")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        doc_title = st.text_input("Document Title", value=st.session_state.last_output_title)
+        prepared_by = st.text_input("Prepared By", value="VectorOps")
+    with col2:
+        doc_type = st.selectbox(
+            "Document Type",
+            [
+                "MSR Draft",
+                "Project Story",
+                "KPI Report",
+                "Quality Review",
+                "Executive Brief",
+                "Status Report",
+                "Meeting Summary",
+            ],
+            index=0 if st.session_state.last_output_type not in ["Project Story", "KPI Report", "Quality Review"] else [
+                "MSR Draft", "Project Story", "KPI Report", "Quality Review", "Executive Brief", "Status Report", "Meeting Summary"
+            ].index(st.session_state.last_output_type),
+        )
+        subtitle = st.text_input("Subtitle", value="AI-generated draft for human review")
+
+    doc_content = st.text_area(
+        "Document Content",
+        value=st.session_state.last_output,
+        height=380,
+        placeholder="Generate content from one of the assistant tabs or paste content here...",
+    )
+
+    if not doc_content.strip():
+        st.info("Generate content from another tab first, or paste document content above.")
+    else:
+        docx_bytes = create_docx(
+            title=doc_title,
+            content=doc_content,
+            doc_type=doc_type,
+            prepared_by=prepared_by,
+            subtitle=subtitle,
+        )
+        filename = build_docx_filename(doc_title, doc_type)
+
+        st.download_button(
+            label="⬇️ Download Word Document",
+            data=docx_bytes,
+            file_name=filename,
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
+
+        with st.expander("Preview content going into the document"):
+            st.markdown(doc_content)
