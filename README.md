@@ -305,6 +305,22 @@ This project demonstrates:
 
 ---
 
+## DevSecOps Milestones Completed
+
+- Built Streamlit AI application
+- Integrated OpenAI API
+- Secured secrets using `.env`
+- Added Word document generation
+- Added unit tests with Pytest
+- Added Ruff code quality checks
+- Added Bandit Python security scanning
+- Added pip-audit dependency scanning
+- Added Docker container support
+- Added Trivy container vulnerability scanning
+- Fixed HIGH container vulnerabilities found by Trivy
+
+---
+
 ## Disclaimer
 
 This project uses fictional and sanitized sample data only. It does not include proprietary, client-sensitive, government-sensitive, or employer-owned data.
