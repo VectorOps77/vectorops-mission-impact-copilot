@@ -1,3 +1,5 @@
+![CI - Quality and Security](https://github.com/VectorOps77/vectorops-mission-impact-copilot/actions/workflows/ci.yml/badge.svg)
+
 # VectorOps Mission Impact Copilot
 
 VectorOps Mission Impact Copilot is an AI-powered project management assistant built with Python, Streamlit, and the OpenAI API. The application helps technical project managers convert raw project notes into structured, leadership-ready content such as project stories, KPI summaries, monthly updates, quality reviews, and downloadable Word documents.
