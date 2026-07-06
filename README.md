@@ -321,6 +321,32 @@ This project demonstrates:
 
 ---
 
+## Azure Deployment Milestone
+
+The application has been containerized with Docker, pushed to Azure Container Registry, and deployed to Azure Container Apps.
+
+Current Azure resources:
+
+- Resource Group: `rg-vectorops-copilot-dev`
+- Azure Container Registry: `vectoropscopilotacr`
+- Azure Container Apps Environment: `vectorops-copilot-env`
+- Azure Container App: `vectorops-mission-impact-copilot`
+- Runtime Port: `8501`
+- Ingress: External
+- Secret Handling: `OPENAI_API_KEY` stored as an Azure Container App secret
+- Model Configuration: `MODEL_NAME=gpt-4.1-mini`
+
+Deployment capabilities demonstrated:
+
+- Docker containerization
+- Azure Container Registry image storage
+- Azure Container Apps deployment
+- Runtime environment variable configuration
+- Secret reference usage
+- Cloud-hosted Streamlit application
+
+---
+
 ## Disclaimer
 
 This project uses fictional and sanitized sample data only. It does not include proprietary, client-sensitive, government-sensitive, or employer-owned data.
