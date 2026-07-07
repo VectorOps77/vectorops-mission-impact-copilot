@@ -347,6 +347,41 @@ Deployment capabilities demonstrated:
 
 ---
 
+## CI/CD Deployment Milestone
+
+This project includes an automated GitHub Actions workflow that validates, scans, builds, and deploys the application to Azure Container Apps.
+
+### Pipeline Stages
+
+1. Python quality and security checks
+   - Ruff linting
+   - Bandit security scan
+   - pip-audit dependency scan
+   - Pytest unit tests
+
+2. Container security
+   - Docker image build
+   - Trivy vulnerability scan
+   - HIGH and CRITICAL vulnerability blocking
+
+3. Azure deployment
+   - Azure login using GitHub repository secret
+   - Docker image build for `linux/amd64`
+   - Push to Azure Container Registry
+   - Update Azure Container App with latest image
+
+### DevSecOps Capabilities Demonstrated
+
+- CI/CD automation
+- Secure GitHub secrets usage
+- Containerized application delivery
+- Azure Container Registry integration
+- Azure Container Apps deployment
+- Automated security gates
+- Infrastructure-aware deployment workflow
+
+---
+
 ## Disclaimer
 
 This project uses fictional and sanitized sample data only. It does not include proprietary, client-sensitive, government-sensitive, or employer-owned data.
