@@ -35,8 +35,6 @@ VectorOps Mission Impact Copilot uses AI to convert raw project notes into struc
 
 The goal is to reduce manual reporting effort while improving clarity, consistency, and executive readiness.
 
-<img width="800" height="525" alt="output" src="https://github.com/user-attachments/assets/250ee357-04f1-40ef-a6bb-d029c3dbf994" />
-
 ---
 
 ## Key Features
