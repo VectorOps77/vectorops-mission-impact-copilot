@@ -8,6 +8,8 @@ from src.services.prompts import (
     quality_check_prompt,
 )
 from src.services.document_service import create_docx, build_docx_filename
+from src.config.prompt_library import PROMPT_LIBRARY
+from src.config.schema_library import SCHEMA_LIBRARY
 
 st.set_page_config(
     page_title="VectorOps Mission Impact Copilot",
@@ -39,13 +41,14 @@ def save_last_output(title: str, doc_type: str, content: str) -> None:
     st.session_state.last_output = content
 
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs(
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
     [
         "Story Assistant",
         "KPI Builder",
         "Monthly Update Assistant",
         "Quality Checker",
         "Document Generator",
+        "AI Studio",
     ]
 )
 
@@ -188,3 +191,71 @@ with tab5:
 
         with st.expander("Preview content going into the document"):
             st.markdown(doc_content)
+
+with tab6:
+    st.header("AI Studio")
+    st.write("Use pre-built prompts and schema guides to generate structured project, DevSecOps, and Azure documentation.")
+
+    selected_prompt_name = st.selectbox(
+        "Choose a Prompt",
+        list(PROMPT_LIBRARY.keys()),
+    )
+
+    selected_prompt = PROMPT_LIBRARY[selected_prompt_name]
+    selected_schema = SCHEMA_LIBRARY.get(selected_prompt_name, {})
+
+    st.subheader(selected_prompt_name)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("### When to Use")
+        st.write(selected_prompt["when_to_use"])
+
+        st.markdown("### Category")
+        st.write(selected_prompt["category"])
+
+        st.markdown("### Recommended Document Type")
+        st.write(selected_prompt["document_type"])
+
+    with col2:
+        st.markdown("### Expected Schema")
+        required_sections = selected_schema.get("required_sections", [])
+
+        if required_sections:
+            for section in required_sections:
+                st.write(f"- {section}")
+        else:
+            st.info("No schema available for this prompt yet.")
+
+    with st.expander("View Prompt Template"):
+        st.code(selected_prompt["prompt"], language="markdown")
+
+    studio_input = st.text_area(
+        "Paste notes for this prompt",
+        height=260,
+        placeholder="Paste project notes, meeting notes, deployment notes, pipeline details, or rough ideas here...",
+    )
+
+    if st.button("Generate with AI Studio"):
+        if not studio_input.strip():
+            st.warning("Please paste notes first.")
+        else:
+            full_prompt = f"""
+{selected_prompt["prompt"]}
+
+User Notes:
+{studio_input}
+"""
+
+            with st.spinner("Generating structured output..."):
+                result = ask_openai(full_prompt)
+
+            save_last_output(
+                title=selected_prompt_name,
+                doc_type=selected_prompt["document_type"],
+                content=result,
+            )
+
+            st.success("Generated output saved to Document Generator.")
+            st.markdown(result)
